@@ -1,0 +1,30 @@
+{
+    "menuHome": "Home",
+    "menuServices": "Services",
+    "menuInfo":"info",
+    "landingTitle01":"DEEP SPACE",
+    "landingTitle01-2":"MESSAGE",
+    
+    "landingButton01":"SEE MORE",
+    "landingButton02":"SELECT SERVICES",
+
+
+    "selectedOpTittle":"User Information",
+    "selectedOp-1-Name":"First Name:",
+    "selectedOp-2-Name":"Last Name:",
+    "selectedOpEmail":"Email:",
+    "selectedOp-Question":"Would like to receive a hard copy certificate",
+    "selectedOp-Address1":"Address Line 1",
+    "selectedOp-Address2":"Address Line 2",
+    "selectedOp-City":"City",
+    "selectedOp-State":"State",
+    "selectedOp-ZipCode":"Zip Code",
+    "selectedOp-Country":"Country",
+    "selectedOp-Offer":"Items List",
+    "selectedOp-Text":"Text",
+    "selectedOp-Picture":"Picture",
+    "selectedOp-Audio":"Audio",
+    "selectedOp-Video":"Video",
+    "selectedOp-Payment":"Proceed to Payment",
+    "selectedOp-Upload":"Upload"
+}

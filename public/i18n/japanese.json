@@ -1,0 +1,20 @@
+{
+    "selectedOpTittle":"ユーザー情報",
+    "selectedOp-1-Name":"ファーストネーム:",
+    "selectedOp-2-Name":"苗字:",
+    "selectedOpEmail":"メール:",
+    "selectedOp-Question":"ハードコピー証明書を受け取りたい",
+    "selectedOp-Address1":"住所1",
+    "selectedOp-Address2":"住所2",
+    "selectedOp-City":"市",
+    "selectedOp-State":"州",
+    "selectedOp-ZipCode":"郵便番号",
+    "selectedOp-Country":"国",
+    "selectedOp-Offer":"アイテムリスト",
+    "selectedOp-Text":"文章",
+    "selectedOp-Picture":"写真",
+    "selectedOp-Audio":"オーディオ",
+    "selectedOp-Video":"ビデオ",
+    "selectedOp-Payment":"支払いに進みます",
+    "selectedOp-Upload":"アップロード"
+}

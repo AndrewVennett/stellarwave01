@@ -1,0 +1,35 @@
+{
+    "menuHome": "Hogar",
+    "menuServices": "Servicios",
+    "menuInfo":"informes",
+    "landingTitle01":"Espacio profundo",
+    "landingTitle01-2":"MENSAGE",
+    
+    "landingButton01":"VER MAS",
+    "landingButton02":"SELECTIONAR SERVICIOS",
+
+
+    "selectedOpTittle":"Información de usuario",
+    "selectedOp-1-Name":"Nombre de pila:",
+    "selectedOp-2-Name":"Apellido:",
+    "selectedOpEmail":"Correo electrónico:",
+    "selectedOp-Question":"Me gustaría recibir un certificado de copia impresa",
+    "selectedOp-Address1":"Dirección Línea 1",
+    "selectedOp-Address2":"Dirección Línea 2",
+    "selectedOp-City":"Ciudad",
+    "selectedOp-State":"Estado",
+    "selectedOp-ZipCode":"Código postal",
+    "selectedOp-Country":"País",
+    "selectedOp-Offer":"Lista de artículos",
+    "selectedOp-Text":"Texto",
+    "selectedOp-Picture":"Imagen",
+    "selectedOp-Audio":"Audio",
+    "selectedOp-Video":"Video",
+    "selectedOp-Payment":"Proceder al pago",
+    "selectedOp-Upload":"Subir",
+
+    "subtitle": "Sub-title",
+    "paragraph": "The evolution of technology has significantly transformed the way we interact with the world. From the early days of bulky computers to the modern era of sleek smartphones and artificial intelligence, innovation continues to shape our daily lives. As advancements in computing power and connectivity improve, the future holds endless possibilities, making technology an integral part of human progress.",
+    "title2":"This is another title",
+    "subtitle2": "This is another Sub-title"
+}
