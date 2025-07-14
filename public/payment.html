@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <title>Payment</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="stylesheet" href="/style-CSS/style.css">
+  <link rel="stylesheet" href="/style-CSS/homeStyle.css">
+  <link rel="stylesheet" href="/style-CSS/navBarStyle.css">
+  <link rel="stylesheet" href="/style-CSS/css-checkbox.css">
+  <style>
+    #summary-table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      color: #fff;
+    }
+    #summary-table th, #summary-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    #summary-table th {
+      background-color: #6366f1;
+    }
+    #summary-table .total {
+      font-weight: bold;
+    }
+  </style>
+  <script src="/code-JS/navBarStyle.js" defer></script>
+</head>
+<body>
+  <header id="GEV-navBar" class="flex" style="display: flex;gap: var(--gap, 1rem);">
+    <div class="logo">
+        <img src="/images/favicon.png" alt="Logo of Corp" class="logo">
+    </div>
+    <button class="mobile-nav-toggle" aria-controls="primary-navigation" aria-expanded="false">
+        <div class="menu-btn">
+            <div class="menu-btn_burger"></div>
+        </div>
+    </button>
+    <nav>
+        <ul data-visible="false" class="primary-navigation flex">
+            <li class="active">
+                <a class="ff-sans-cond uppercase text-white letter-spacing" href="/index.html">
+                    <span aria-hidden="true">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/selectedOption.html">
+                    <span aria-hidden="true">Services</span>
+                </a>
+            </li>
+            <li>
+                <a href="/info.html">
+                    <span aria-hidden="true">Info</span>
+                </a>
+            </li>
+            <li>
+                <a href="/payment.html">
+                    <span aria-hidden="true">Payment</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+  </header>
+  <h1>Payment Form</h1>
+  <p>Card #: 4242424242424242</p>
+  <p>CVC #: 123</p>
+  <p>Date: 10/40</p>
+  <p>Zip Code: 33139</p>
+  <br>
+  <br>
+
+  <h3>Selected Services Summary</h3>
+  <table id="summary-table">
+    <thead>
+      <tr>
+        <th>Service Name</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody id="summary-body"></tbody>
+    <tfoot>
+      <tr>
+        <td class="total">Total</td>
+        <td id="total-amount" class="total">$0.00</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <form id="payment-form" action="">
+    <section class="container">
+      <div class="card front-face">
+        <header>
+          <span class="logo">
+            <img src="images/logo.png" alt="Bank Logo" />
+            <h5>Master Card</h5>
+          </span>
+          <img src="images/chip.png" alt="Chip" class="chip" />
+        </header>
+
+        <div class="card-details">
+          <div class="name-number">
+            <h6>Card Number</h6>
+            <div id="cardNumber" class="number"></div>
+            <h6>Card Holder Name</h6>
+            <input id="cardName" class="name" type="text" placeholder="Enter your name" required>
+          </div>
+          <div class="valid-date">
+            <h6>Valid Thru</h6>
+            <div id="expDate"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card back-face">
+        <h6>For customer service call +977 4343 3433 or email at mastercard@gmail.com</h6>
+        <span class="magnetic-strip"></span>
+        <div class="signature"><div id="CVC"></div></div>
+        <h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h5>
+      </div>
+    </section>
+
+    <div id="card-errors" role="alert"></div>
+    <button type="submit">Submit Payment</button>
+  </form>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  var stripe = Stripe('pk_test_51QkE43C1UqQhFhw44FBwsaPxexyTd3KbAAdIkEf1eWCsBtdKk4FTQ04JQil8zGQ3BMkFTsIW34zpO4ICVGeXOdgm001REg2tXE');
+  var elements = stripe.elements();
+
+  var style = {
+    base: {
+      fontSize: '16px',
+      color: '#fff',
+      fontFamily: '"Poppins", sans-serif',
+      '::placeholder': { color: 'rgba(255, 255, 255, 0.7)' }
+    },
+    invalid: { color: '#fa755a' }
+  };
+
+  var cardNumber = elements.create('cardNumber', { style: style });
+  cardNumber.mount('#cardNumber');
+
+  var cardExpiry = elements.create('cardExpiry', { style: style });
+  cardExpiry.mount('#expDate');
+
+  var cardCvc = elements.create('cardCvc', { style: style });
+  cardCvc.mount('#CVC');
+
+  let cardNumberFilled = false;
+  let expDateFilled = false;
+  let cvcFilled = false;
+
+  function updateFlipState() {
+    const cardName = document.getElementById('cardName').value.trim();
+    const container = document.querySelector('.container');
+    const frontFieldsFilled = cardNumberFilled && cardName !== '' && expDateFilled;
+
+    if (frontFieldsFilled && !cvcFilled && !container.classList.contains('flipped')) {
+      container.classList.add('flipped');
+    } else if (frontFieldsFilled && cvcFilled && container.classList.contains('flipped')) {
+      container.classList.remove('flipped');
+    } else if (!frontFieldsFilled && container.classList.contains('flipped')) {
+      container.classList.remove('flipped');
+    }
+  }
+
+  cardNumber.on('change', (event) => {
+    cardNumberFilled = event.complete;
+    document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+    updateFlipState();
+  });
+
+  cardExpiry.on('change', (event) => {
+    expDateFilled = event.complete;
+    document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+    updateFlipState();
+  });
+
+  cardCvc.on('change', (event) => {
+    cvcFilled = event.complete;
+    document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+    updateFlipState();
+  });
+
+  document.getElementById('cardName').addEventListener('input', () => {
+    updateFlipState();
+  });
+
+  // IndexedDB Logic for Payment Page
+  const request = indexedDB.open('ItemsDB', 4);
+
+  request.onsuccess = function (event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['items'], 'readonly');
+    const objectStore = transaction.objectStore('items');
+    const summaryBody = document.getElementById('summary-body');
+    const totalAmountElement = document.getElementById('total-amount');
+
+    summaryBody.innerHTML = '';
+
+    const getRequest = objectStore.getAll();
+
+    getRequest.onsuccess = function () {
+      const items = getRequest.result;
+      let total = 0;
+
+      const selectedItems = items.filter(item => item.boxCheck && item.uploaded);
+      if (selectedItems.length === 0) {
+        summaryBody.innerHTML = '<tr><td colspan="2">No services selected or uploaded.</td></tr>';
+        totalAmountElement.textContent = '$0.00';
+        document.getElementById('payment-form').querySelector('button[type="submit"]').disabled = true;
+        return;
+      }
+
+      selectedItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>$${item.price.toFixed(2)}</td>
+        `;
+        summaryBody.appendChild(row);
+        total += item.price;
+      });
+
+      totalAmountElement.textContent = `$${total.toFixed(2)}`;
+    };
+  };
+
+  // Form submission
+  document.getElementById('payment-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+    if (!userInfo.firstName || !userInfo.lastName || !userInfo.email) {
+      alert('Operation cannot continue because the shopping cart is empty.');
+      return;
+    }
+
+    const dbRequest = indexedDB.open('ItemsDB', 4);
+    dbRequest.onsuccess = async function (event) {
+      const db = event.target.result;
+      const transaction = db.transaction(['items'], 'readonly');
+      const objectStore = transaction.objectStore('items');
+      const getRequest = objectStore.getAll();
+
+      getRequest.onsuccess = async function () {
+        const items = getRequest.result;
+        const selectedItems = items.filter(item => item.boxCheck && item.uploaded);
+        if (selectedItems.length === 0) {
+          alert('Operation cannot continue because the shopping cart is empty.');
+          return;
+        }
+
+        const cardName = document.getElementById('cardName').value.trim();
+        const firstNameMatch = cardName.match(/^[^ ]+/);
+        const lastNameMatch = cardName.match(/[^ ]+$/);
+        const firstName = firstNameMatch ? firstNameMatch[0] : 'Unknown';
+        const lastName = lastNameMatch ? lastNameMatch[0] : 'Unknown';
+
+        const selectedArticleIds = selectedItems.map(item => item.articleId);
+
+        const totalResponse = await fetch('http://localhost:3000/api/total', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ articleIds: JSON.stringify(selectedArticleIds) })
+        });
+
+        if (!totalResponse.ok) {
+          const errorData = await totalResponse.json();
+          document.getElementById('card-errors').textContent = errorData.error || 'Failed to calculate total';
+          return;
+        }
+
+        const totalData = await totalResponse.json();
+        const totalAmount = totalData.totalAmount;
+
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+          type: 'card',
+          card: cardNumber,
+          billing_details: { name: cardName }
+        });
+
+        if (error) {
+          document.getElementById('card-errors').textContent = error.message;
+        } else {
+          try {
+            const response = await fetch('http://localhost:3000/create-payment-intent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                paymentMethodId: paymentMethod.id,
+                totalAmount: totalAmount,
+                firstName: firstName,
+                lastName: lastName
+              })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.error) {
+              document.getElementById('card-errors').textContent = data.error;
+            } else {
+              // Upload localStorage data to server
+              const formData = new FormData();
+              selectedItems.forEach(item => {
+                if (item.name === 'Text') {
+                    const textData = JSON.parse(localStorage.getItem(`text-${item.articleId}`) || '{}');
+                    if (textData.content && textData.filename) {
+                        const blob = new Blob([textData.content], { type: 'text/plain' });
+                        formData.append('files', blob, textData.filename);
+                    }
+                } else {
+                    const fileName = localStorage.getItem(`file-${item.articleId}`);
+                    if (fileName) {
+                        formData.append('files', fileName);
+                    }
+                }
+              });
+
+              try {
+                const uploadResponse = await fetch('/upload-files', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                  throw new Error('Failed to upload files');
+                }
+
+                // Clear localStorage after successful upload
+                localStorage.removeItem('userInfo');
+                localStorage.removeItem('userInfoFilename');
+                selectedItems.forEach(item => {
+                    localStorage.removeItem(`text-${item.articleId}`);
+                    localStorage.removeItem(`file-${item.articleId}`);
+                });
+
+                window.location.href = data.redirectUrl;
+              } catch (uploadError) {
+                document.getElementById('card-errors').textContent = `File upload failed: ${uploadError.message}`;
+                console.error('Upload error:', uploadError);
+              }
+            }
+          } catch (fetchError) {
+            document.getElementById('card-errors').textContent = `Payment failed: ${fetchError.message}`;
+            console.error('Fetch error:', fetchError);
+          }
+        }
+      };
+    };
+  });
+});
+  </script>
+</body>
+</html>
